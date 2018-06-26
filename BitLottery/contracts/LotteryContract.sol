@@ -45,6 +45,7 @@ contract LotteryContract
     uint private totalFromFallback;
 
     mapping(address => uint) public winnerBalances;
+    mapping(uint => uint) public ticketCount;
     Lottery[] public allLottery;
 
     Clock public clock;
@@ -171,7 +172,20 @@ contract LotteryContract
     {
         // pick 6 pair of numbers
 
+        uint winningNumber = 0;
+        
+
         // if someone's number is correct, then deposit the amount to that address
+        uint count = 0;
+
+        for (uint i = 0; i < allLottery.length; i++)
+        {
+            if(allLottery[i].number == winningNumber)
+            {
+                count++;
+                allLottery[i].lotteryOwner;
+            }
+        }
 
         // if noone correct, accumulate this campaign amount to next campaign
 
