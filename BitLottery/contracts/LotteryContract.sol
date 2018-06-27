@@ -15,11 +15,12 @@ contract LotteryContract
     // Struct
 
     // Event
+    event EventSetupFirstTimeFinish(address contractOwner, bool isContractUnlocked);
     event EventFoundWinner(address winner, uint lotteryNumber, uint campaignId);
     event EventBoughtTicket(address buyer, uint lotteryNumber, uint campaignId, uint ticketPrice, uint totalLotteryAmount);
     event EventStartNewCampaign(uint campaignId, uint campaignStartTime, uint campaignDuration , uint ticketPrice);
     event EventStopCurrentCampaign(uint campaignId, uint stopTime, uint totalAmount);
-    event EventWinnerWithdrawMoney(address winner, uint amount, uint withdrawTime, uint campaignId);
+    event EventWinnerWithdrawMoney(address winner, uint amount, uint withdrawTime);
     event EventDeveloperWithdrawMoney(address developerAddress, uint amount, uint withdrawTime);
     event EventFoundRandomNumber(uint campaignId, uint randomNumber, uint time);
     event EventGetAllInfo(uint campaignId, uint campaignStartTime, uint campaignDuration, uint campaignEndTime, uint campaignTicketPrice, uint campaignTotalAmount, uint lotteryCount);
@@ -84,10 +85,14 @@ contract LotteryContract
     {
         require(campaignId == 0);
         isContractUnlocked = true;  
+
+        emit EventSetupFirstTimeFinish(msg.sender, isContractUnlocked);
     }
 
     function startNewCampaign() external onlyOwner onlyAfterContractUnlock returns(bool)
     {
+        require(_isCampaignEnd() == true);
+
         require(campaignDuration > 0);
         require(campaignTicketPrice > 0);
 
@@ -100,10 +105,6 @@ contract LotteryContract
         emit EventStartNewCampaign(campaignId, campaignStartTime, campaignDuration, campaignTicketPrice);
 
         return true;
-    }
-
-    function stopCurrentCampaign() external onlyOwner onlyAfterContractUnlock
-    {
     }
 
     function buyLottery(uint _lotteryNumber) external payable onlyAfterContractUnlock
@@ -128,7 +129,7 @@ contract LotteryContract
         winnerBalances[msg.sender] = 0;
         msg.sender.transfer(balance);
 
-        emit EventWinnerWithdrawMoney(msg.sender, balance, now, campaignId);
+        emit EventWinnerWithdrawMoney(msg.sender, balance, now);
     }
 
     function withdrawDeveloperMoney(address _developerAddress) external onlyOwner 
@@ -171,29 +172,86 @@ contract LotteryContract
     function _randomWinner() private 
     {
         // pick 6 pair of numbers
-
         uint winningNumber = 0;
+        winningNumber = _findWinningNumber();
         
-
         // if someone's number is correct, then deposit the amount to that address
+        // find how many winners in this campaign
         uint count = 0;
+        count = _countWinners(winningNumber);
 
-        for (uint i = 0; i < allLottery.length; i++)
+        if(count > 0)
         {
-            if(allLottery[i].number == winningNumber)
+            // if there is Winners, we will assign the amount to each winner, and reset the amount back to Zero
+            uint amountToEachBuyer = 0;
+            amountToEachBuyer = totalWinningAmount / count;
+           
+            // find Winners
+            address[] memory winnerAddresses = new address[](count);
+            uint winnerCount = 0;
+            for(uint i = 0; i < allLottery.length; i++ )
             {
-                count++;
-                allLottery[i].lotteryOwner;
+                if(allLottery[i].number == winningNumber)
+                {
+                    winnerAddresses[winnerCount] = allLottery[i].lotteryOwner;
+                    winnerCount++;
+
+                    if(winnerCount > count)
+                    {
+                        break;
+                    }
+                }
             }
+
+            // RESET TOTAL AMOUNT TO ZERO, CAUSE THERE IS WINNERS.
+            totalWinningAmount = 0;
+
+            // assign amount to each Winner
+            for(uint j = 0; j < winnerAddresses.length; j++)
+            {
+                winnerBalances[winnerAddresses[j]] += amountToEachBuyer;
+            }
+
+        }
+        else
+        {
+             // if count = 0, there is no Winner, so that we keep the total amount accumulated to the next campaign
         }
 
-        // if noone correct, accumulate this campaign amount to next campaign
 
+        // START A NEW CAMPAIGN ???
     }
 
-    function _isCampaignEnd() private returns(bool)
+    function _isCampaignEnd() private view returns(bool)
     {
         return campaignEndTime <= clock.getNow();
+    }
+
+    function _countWinners(uint _winningNumber) internal view returns(uint)
+    {
+        uint winnerCount = 0;
+        
+        for(uint i = 0; i < allLottery.length; i++ )
+        {
+            if(allLottery[i].number == _winningNumber)
+            {
+                winnerCount++;
+            }
+        }
+        
+        return winnerCount;
+    }
+
+    function _findWinningNumber() private view returns (uint) 
+    {
+        uint rand1 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 1000000;
+        uint rand2 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 10000000;
+        uint rand3 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 1000000;
+        uint rand4 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 10000000;
+        uint rand5 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 1000000;
+        uint rand6 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 10000000;
+
+        return (rand1 + rand2 + rand3 + rand4 + rand5 + rand6) % 1000000;
     }
     // Function
 
