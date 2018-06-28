@@ -1,6 +1,7 @@
 pragma solidity ^0.4.23;
 
 import "./Clock.sol";
+import "./Random.sol";
 
 contract LotteryContract
 {
@@ -29,35 +30,39 @@ contract LotteryContract
 
 
     // Variable
+    // Public
     address public owner;
-
-    bool private isContractUnlocked = false;
 
     uint public campaignId = 0;
     uint public campaignDuration;
     uint public campaignStartTime;
     uint public campaignEndTime;
     uint public campaignTicketPrice;
-
     uint public actualTicketPrice;
-
     uint public totalWinningAmount;
     uint public totalMaintananceAmount;
-    uint private totalFromFallback;
-
-    mapping(address => uint) public winnerBalances;
-    mapping(uint => uint) public ticketCount;
+    
     Lottery[] public allLottery;
+    mapping(address => uint) public winnerBalances;
 
     Clock public clock;
+    Random public random;
+    // Public
+
+
+    // Private
+    bool public isContractUnlocked = false;
+    uint private totalFromFallback;
+    // Private
     // Variable
 
 
     // Constructor
-    constructor(address _clockAddress) public 
+    constructor(address _clockAddress, address _randomAddress) public 
     {
         owner = msg.sender;
         clock = Clock(_clockAddress);
+        random = Random(_randomAddress);
 
         campaignDuration = 3 days;
         campaignTicketPrice = 0.01 ether;
@@ -222,7 +227,7 @@ contract LotteryContract
         // START A NEW CAMPAIGN ???
     }
 
-    function _isCampaignEnd() private view returns(bool)
+    function _isCampaignEnd() public view returns(bool)
     {
         return campaignEndTime <= clock.getNow();
     }
@@ -242,16 +247,17 @@ contract LotteryContract
         return winnerCount;
     }
 
-    function _findWinningNumber() private view returns (uint) 
+    function _findWinningNumber() public view returns (uint) 
     {
-        uint rand1 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 1000000;
-        uint rand2 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 10000000;
-        uint rand3 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 1000000;
-        uint rand4 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 10000000;
-        uint rand5 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 1000000;
-        uint rand6 = uint(keccak256(totalWinningAmount, campaignId, totalMaintananceAmount, now)) % 10000000;
+        uint rand = 0;
+        uint minExpected = 99999;
 
-        return (rand1 + rand2 + rand3 + rand4 + rand5 + rand6) % 1000000;
+        while(rand <= minExpected)
+        {
+            rand = random.getRandomNumber(totalWinningAmount, campaignId, totalMaintananceAmount, campaignStartTime, campaignEndTime, now);
+        }
+
+        return rand;
     }
     // Function
 
