@@ -52,7 +52,7 @@ contract LotteryContract
 
     // Private
     bool public isContractUnlocked = false;
-    uint private totalFromFallback;
+    uint public totalFromFallback;
     // Private
     // Variable
 
@@ -149,7 +149,7 @@ contract LotteryContract
         emit EventDeveloperWithdrawMoney(_developerAddress, balance, now);
     }
 
-    function getCurrentCampaignInfo() external returns(uint)
+    function getCurrentCampaignInfo() external view returns(uint)
     {
         emit EventGetAllInfo(campaignId, campaignStartTime, campaignDuration, campaignEndTime, campaignTicketPrice, totalWinningAmount, allLottery.length);
         return campaignId;
@@ -249,15 +249,20 @@ contract LotteryContract
 
     function _findWinningNumber() public view returns (uint) 
     {
-        uint rand = 0;
-        uint minExpected = 99999;
+        //uint rand = 0;
+        //uint minExpected = 99999;
 
-        while(rand <= minExpected)
-        {
-            rand = random.getRandomNumber(totalWinningAmount, campaignId, totalMaintananceAmount, campaignStartTime, campaignEndTime, now);
-        }
+        //while(rand <= minExpected)
+        //{
+        //rand = random.getRandomNumber(totalWinningAmount, campaignId, totalMaintananceAmount, campaignStartTime, campaignEndTime, now);
+        //}
 
-        return rand;
+        return random.getRandomNumber(totalWinningAmount, campaignId, totalMaintananceAmount, campaignStartTime, campaignEndTime, now);
+    }
+
+    function _getTicketCount() public view returns(uint)
+    {
+        return allLottery.length;
     }
     // Function
 

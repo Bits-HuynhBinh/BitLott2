@@ -2,8 +2,7 @@ pragma solidity ^0.4.23;
 
 contract Random
 {
-   
-    uint randomNumber;
+    uint private randomNumber;
 
     function getRandomNumber(uint var1, uint var2, uint var3, uint var4, uint var5, uint var6) public view returns(uint)
     {

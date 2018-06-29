@@ -120,9 +120,105 @@ contract TestLotteryContract
 
         Assert.equal(address(lot).balance, 0, "Not equal");
 
-        address(lot).transfer(5000)();
+        //address(lot).transfer(5000 wei);
         //Assert.equal(address(lot).balance, 5000 wei, "Not equal");
+
+
+        if (!address(lot).call.value(5000 wei).gas(19350)())
+           revert();
+        Assert.equal(address(lot).balance, 5000 wei, "Not equal");
+
+
+        if (!address(lot).call.value(1 wei).gas(19350)())
+           revert();
+        Assert.equal(address(lot).balance, 5001 wei, "Not equal");
+
+
+        if (!address(lot).call.value(15 wei).gas(19350)())
+           revert();
+        Assert.equal(address(lot).balance, 5016 wei, "Not equal");
+
+
+        // check the fallback amount variable
+        uint totalFallback = lot.totalFromFallback();
+        Assert.equal(totalFallback, 5016 wei, "Not equal");
     }
+
+
+    function testBuyTicket() public
+    {
+        LotteryContract lot;
+        Clock clock;
+        Random random;
+
+        uint actualTicketPrice = 0.009 ether;
+        uint qty = 0;
+        uint ticketNumber = 0;
+        uint sendValue = 0;
+
+        (lot, clock, random) = begin();
+        lot.setupContractFirstTime();
+        lot.startNewCampaign();
+        Assert.equal(lot._isCampaignEnd(), false, "Campaign must be in OPEN state.");
+
+
+        // buy ticket 1
+        ticketNumber = 112233;
+        sendValue = 0.01 ether;
+        lot.buyLottery.value(sendValue)(ticketNumber);
+        qty++;
+        Assert.equal(lot.totalWinningAmount(), (actualTicketPrice * qty), "ERROR");
+        Assert.equal(lot.totalMaintananceAmount(), ((sendValue - actualTicketPrice) * qty), "ERROR");
+
+        var (campaignId, number, price, owner) = lot.allLottery(qty-1);
+        Assert.equal(lot._getTicketCount(), qty, "ERROR");
+        Assert.equal(number, ticketNumber, "ERROR");
+
+
+        // buy ticket 2
+        ticketNumber = 123456;
+        sendValue = 0.01 ether;
+        lot.buyLottery.value(sendValue)(ticketNumber);
+        qty++;
+        Assert.equal(lot.totalWinningAmount(), (actualTicketPrice * qty), "ERROR");
+        Assert.equal(lot.totalMaintananceAmount(), ((sendValue - actualTicketPrice) * qty), "ERROR");
+
+        (campaignId, number, price, owner) = lot.allLottery(qty-1);
+        Assert.equal(lot._getTicketCount(), qty, "ERROR");
+        Assert.equal(number, ticketNumber, "ERROR");
+
+
+        // buy ticket 3
+        ticketNumber = 999999;
+        sendValue = 0.01 ether;
+        lot.buyLottery.value(sendValue)(ticketNumber);
+        qty++;
+        Assert.equal(lot.totalWinningAmount(), (actualTicketPrice * qty), "ERROR");
+        Assert.equal(lot.totalMaintananceAmount(), ((sendValue - actualTicketPrice) * qty), "ERROR");
+
+        (campaignId, number, price, owner) = lot.allLottery(qty-1);
+        Assert.equal(lot._getTicketCount(), qty, "ERROR");
+        Assert.equal(number, ticketNumber, "ERROR");
+    }
+
+    function testGetCurrentCampaignInfo() public
+    {
+        LotteryContract lot;
+        Clock clock;
+        Random random;
+
+        (lot, clock, random) = begin();
+        lot.setupContractFirstTime();
+        lot.startNewCampaign();
+        Assert.equal(lot._isCampaignEnd(), false, "Campaign must be in OPEN state.");
+
+        uint camId = lot.getCurrentCampaignInfo();
+    }
+
+
+
+
+
 
 
 
