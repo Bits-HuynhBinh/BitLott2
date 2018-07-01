@@ -66,7 +66,6 @@ contract LotteryContract
 
         campaignDuration = 3 days;
         campaignTicketPrice = 0.01 ether;
-
         actualTicketPrice = 0.009 ether;
     }
     // Constructor

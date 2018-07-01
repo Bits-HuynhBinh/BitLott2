@@ -213,7 +213,33 @@ contract TestLotteryContract
         Assert.equal(lot._isCampaignEnd(), false, "Campaign must be in OPEN state.");
 
         uint camId = lot.getCurrentCampaignInfo();
+
+        Assert.equal(camId, 1, "Campaign id must be 1");
     }
+
+
+    function testWithdrawDeveloperAmount() public
+    {
+
+    }
+
+    function testWithdrawWinnerAmount() public
+    {
+
+    }
+
+    function testFullFlow() public
+    {
+
+    }
+
+    function testFindWinningNumber() public
+    {
+        
+    }
+
+
+
 
 
 
