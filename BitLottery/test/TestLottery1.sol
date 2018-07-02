@@ -4,6 +4,7 @@ import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol"; 
 import "../contracts/LotteryContract.sol"; 
 import "../contracts/Clock.sol"; 
+import "../contracts/Anonymous.sol";
 
 contract TestLotteryContract
 {
@@ -216,41 +217,4 @@ contract TestLotteryContract
 
         Assert.equal(camId, 1, "Campaign id must be 1");
     }
-
-
-    function testWithdrawDeveloperAmount() public
-    {
-
-    }
-
-    function testWithdrawWinnerAmount() public
-    {
-
-    }
-
-    function testFullFlow() public
-    {
-
-    }
-
-    function testFindWinningNumber() public
-    {
-        
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

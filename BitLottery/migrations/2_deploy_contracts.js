@@ -1,6 +1,7 @@
 var LotteryContract = artifacts.require("./LotteryContract.sol");
 var Clock = artifacts.require("./Clock.sol");
 var Random = artifacts.require("./Random.sol");
+var Anonymous = artifacts.require("./Anonymous.sol");
 
 const DAY = 3600 * 24;
 
@@ -10,7 +11,10 @@ module.exports = function(deployer)
   {
     return deployer.deploy(Random).then(function()
     {
-      return deployer.deploy(LotteryContract, Clock.address, Random.address);
+      return deployer.deploy(LotteryContract, Clock.address, Random.address).then(function()
+      {
+        return deployer.deploy(Anonymous);
+      });
     })
   });
 };
