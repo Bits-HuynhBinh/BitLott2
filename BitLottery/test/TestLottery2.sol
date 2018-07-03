@@ -83,7 +83,7 @@ contract TestLottery2
         //2. withdraw the amount
         address developerAddress = new Anonymous();
         lot.withdrawDeveloperMoney(developerAddress);
-        Assert.equal(developerAddress.balance, devAmount, "ERROR");
+        Assert.equal(developerAddress.balance, devAmount - 1, "ERROR");
         //Assert.equal(lot.totalMaintananceAmount(), 0, "ERROR");
     }
 

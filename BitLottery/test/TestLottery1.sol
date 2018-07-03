@@ -6,7 +6,7 @@ import "../contracts/LotteryContract.sol";
 import "../contracts/Clock.sol"; 
 import "../contracts/Anonymous.sol";
 
-contract TestLotteryContract
+contract TestLottery1
 {
     uint public initialBalance = 10 ether;
 
