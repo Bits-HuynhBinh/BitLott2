@@ -41,6 +41,7 @@ contract LotteryContract
     uint public actualTicketPrice;
     uint public totalWinningAmount;
     uint public totalMaintananceAmount;
+    uint public winningNumber;
     
     Lottery[] public allLottery;
     mapping(address => uint) public winnerBalances;
@@ -173,11 +174,12 @@ contract LotteryContract
         campaignDuration = _newDuration;
     }
 
-    function _randomWinner() private 
+    function _randomWinner() public 
     {
         // pick 6 pair of numbers
-        uint winningNumber = 0;
-        winningNumber = _findWinningNumber();
+        uint _winningNumber = 0;
+        _winningNumber = _findWinningNumber();
+        winningNumber = _winningNumber;
         
         // if someone's number is correct, then deposit the amount to that address
         // find how many winners in this campaign
