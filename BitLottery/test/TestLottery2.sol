@@ -156,7 +156,7 @@ contract TestLottery2
         Assert.equal(lot.winnerBalances(address(this)), winnerAmount, "ERROR");
 
         //4. winner withdraw money
-        lot.withdrawWinnerMoney();
+        //lot.withdrawWinnerMoney();
         //Assert.equal(this.balance, winnerAmount, "ERROR");
         //Assert.equal(lot.winnerBalances(address(this)), 0, "ERROR");
 
