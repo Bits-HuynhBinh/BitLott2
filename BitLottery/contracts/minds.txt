@@ -1,0 +1,9 @@
+Sau khi pull source code của Minds.com và dành thời gian để tìm hiểu code của họ. Mình có thể khẳng định vài điểm như sau, Minds không tốt, không bảo mật và hoàn toàn không phi tập trung như mọi người vẫn được nghe quảng cáo:
+
+1. Minds engine, phần backend của Minds không được viết từ đầu, mà được fork từ một source code khác Elgg (http://github.com/elgg/elgg). Họ chỉnh chỉnh sửa chút ít, xây dựng thêm front end và phần crypto (viết trên nền Ethereum).
+
+2. Minds là Centralize system, nghĩa là toàn bộ dữ liệu người dùng bao gồm thông tin định danh, bài viết, hình ảnh được lưu trữ hoàn toàn trên database của Minds. Hoàn toàn trái ngược với những gì họ giới thiệu. Chỉ có token của họ, do build trên nền Ethereum, công nghệ BlockChain là Decentralize - nhưng điều này không có ý nghĩa gì về việc bảo mật thông tin, hay cam kết không chia sẻ dữ liệu người dùng.
+
+3. Minds có mã hóa Messenger, nhưng với kĩ thuật mã hóa tự xây dựng, chỉ sử dụng 1 RSA key duy nhất để giải mã thông tin người dùng, mà key này cũng lưu trên máy chủ của họ. Tất cả những thông tin còn lại đều ở dạng Raw data.
+
+Xét thấy với những đều trên, Minds không đảm bảo được rằng, nó là một Social Network đủ tốt để đảm bảo an toàn cho người dùng, hay kể cả việt thúc đẩy dân chủ, bảo vệ tiếng nói của người dân trên môi trường mạng. Mọi người hãy cân nhắc kĩ trước khi lưu trữ những thông tin của mình, dù là thông tin "thông thường" hay "nhạy cảm" trên Minds.
